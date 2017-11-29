@@ -12,9 +12,13 @@ import java.math.BigInteger;
 import java.sql.*;
 
 public class PrintServer implements Printerface {
+
 	private static List<String> activeSessions = new ArrayList<String>();
+
 	private Queue<Pair<Integer,String>> queue = new LinkedList<Pair<Integer,String>>();
+
 	private Map<String,String> config = new HashMap<String, String>();
+
 	private static void logEvent(String event) throws IOException{
 		FileWriter fileWriter = new FileWriter("logfile.log",true);
 		PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -22,11 +26,13 @@ public class PrintServer implements Printerface {
 		printWriter.print("\n");
 		printWriter.close();
 	}
+
 	private static String getEventTimeStamp(){
 		SimpleDateFormat sdfr = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		java.util.Date now = new java.util.Date();
 		return sdfr.format(now);
 	}
+
 	private static String hashPassword(String password, String salt){
 		String passwordWithSalt = password + salt;
 		byte[] pwBytes = passwordWithSalt.getBytes();
@@ -40,7 +46,8 @@ public class PrintServer implements Printerface {
 		String hashedPW = String.format("%032X", new BigInteger(1, hashedBytes));
 		return hashedPW;
 	}
-	private static void registerUser(String username, String password){
+
+	private static void registerUser(String username, String firstname, String lastname, String password){
 		String salt = String.valueOf((int)(Math.random() * 1000000000 + 1));
 		String hashedPW = hashPassword(password, salt);
 		try{
@@ -50,10 +57,12 @@ public class PrintServer implements Printerface {
 		}
 		try{
 			Connection c = DriverManager.getConnection("jdbc:sqlite:printer.db");
-			String sql = "INSERT INTO users(name,password) VALUES(?,?)";
+			String sql = "INSERT INTO users(username,firstname,lastname,password) VALUES(?,?,?,?)";
 			PreparedStatement pstmt = c.prepareStatement(sql);
 			pstmt.setString(1, username);
-			pstmt.setString(2, hashedPW + ":" + salt);
+			pstmt.setString(2, firstname);
+			pstmt.setString(3, lastname);
+			pstmt.setString(4, hashedPW + ":" + salt);
 			pstmt.executeUpdate();
 			c.close();
 		}
@@ -61,15 +70,18 @@ public class PrintServer implements Printerface {
 			System.out.println(ex);
 		}
 	}
+
 	private static Boolean authenticateSession(String sessionId) {
 		if (!activeSessions.contains(sessionId)){
 			return false;
 		}
 		return true;
 	}
+
 	private static String createSessionID(){
 		return UUID.randomUUID().toString();
 	}
+
 	private static void RMISetup(){
 		try {
 		    String name = "PrintServer";
@@ -94,12 +106,17 @@ public class PrintServer implements Printerface {
 		String hash = null;
 		try{
 			Connection c = DriverManager.getConnection("jdbc:sqlite:printer.db");
-			String sql = "SELECT name,password FROM users WHERE name = ?";
+			String sql = "SELECT username,password FROM users WHERE username = ?";
 			PreparedStatement pstmt = c.prepareStatement(sql);
 			pstmt.setString(1, username);
 			rs = pstmt.executeQuery();
-			name = rs.getString("name");
-			hash = rs.getString("password");
+			if (rs.next()) {
+				name = rs.getString("username");
+				hash = rs.getString("password");
+			}
+			else {
+				return new UUID(0L, 0L).toString();
+			}
 			c.close();
 		}
 		catch(SQLException ex){
