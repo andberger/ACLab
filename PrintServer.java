@@ -19,6 +19,8 @@ public class PrintServer implements Printerface {
 
 	private Map<String,String> config = new HashMap<String, String>();
 
+	private static List<Pair<String, String>> accessControlList = new ArrayList<Pair<String, String>>();
+
 	private static void logEvent(String event) throws IOException{
 		FileWriter fileWriter = new FileWriter("logfile.log",true);
 		PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -82,6 +84,24 @@ public class PrintServer implements Printerface {
 		return UUID.randomUUID().toString();
 	}
 
+	private static void populateAccessControlList(){
+		ResultSet rs = null;
+		try{
+			Connection c = DriverManager.getConnection("jdbc:sqlite:printer.db");
+			String sql = "SELECT username,operation FROM accesscontrollist";
+			PreparedStatement pstmt = c.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				Pair<String,String> access = new Pair<String,String>(rs.getString("username"), rs.getString("operation"));
+				accessControlList.add(access);
+			}
+			c.close();
+		}
+		catch(SQLException ex){
+			System.out.println(ex);
+		}
+	}
+
 	private static void RMISetup(){
 		try {
 		    String name = "PrintServer";
@@ -98,6 +118,7 @@ public class PrintServer implements Printerface {
 
 	public PrintServer() {
 		super();
+		populateAccessControlList();
 	}
 
 	public String authenticateUser(String username, String password){
@@ -158,7 +179,7 @@ public class PrintServer implements Printerface {
 
 	public String queue(String sessionId){
 		if (!authenticateSession(sessionId)){ return "Unauthorized";};
-		String q = "";;
+		String q = "";
 		for(Pair<Integer,String> printjob : queue){
 			q += printjob.getKey() + " - " + printjob.getValue() + " | ";
 		}
