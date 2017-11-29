@@ -3,7 +3,7 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 public interface Printerface extends Remote {
-	String print(String filename, String printer, UUID sId) throws RemoteException;
+	String print(String filename, String printer) throws RemoteException;
 	String queue(UUID sId) throws RemoteException;
 	String topQueue(int job, UUID sId) throws RemoteException;
 	String start(UUID sId) throws RemoteException;

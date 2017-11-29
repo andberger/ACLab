@@ -12,10 +12,9 @@ public class PrintClient {
 		    Printerface p = (Printerface) registry.lookup(name);
 		    UUID activeSessionID = null;
 		    activeSessionID = p.authenticateUser("testuser", "asdasdasd");
-		    System.out.println(p.print("data-file.pdf", "printer100A",activeSessionID));
-		    System.out.println(p.queue(activeSessionID));
-		    System.out.println(p.setConfig("printer-policy","universal",activeSessionID));
-		    System.out.println(p.readConfig("printer-policy",activeSessionID));
+		    System.out.println(p.print("data-file.pdf", "printer100A"));
+		    System.out.println("virkar?");
+		    System.out.println(activeSessionID);
 		} catch (Exception e) {
 		    System.out.println(e);
 		    System.err.println("PrintClient  exception:");

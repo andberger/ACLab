@@ -107,6 +107,7 @@ public class PrintServer implements Printerface {
 		}
 		String[] split = hash.split(":");
 		String userPW = hashPassword(password, split[1]);
+		System.out.println("haaa");
 		if (userPW.equals(split[0])) {
 			try{
 				logEvent(getEventTimeStamp() + " | " + "User " + username + " has been authenticated");
@@ -115,6 +116,7 @@ public class PrintServer implements Printerface {
 			}
 			UUID sID = createSessionID();
 			activeSessions.add(sID);
+			System.out.println(sID);
 			return sID;
 		}
 		else {
@@ -123,8 +125,9 @@ public class PrintServer implements Printerface {
 
 	}
 
-	public String print(String filename, String printer, UUID sId){
-		if (!authenticateSession(sId)){ return "Unauthorized";};
+	public String print(String filename, String printer){
+		System.out.println("hallo frá hér");
+		//if (!authenticateSession(sId)){ return "Unauthorized";};
 		Random ran = new Random();
 		int x = ran.nextInt(1600) + 5000;
 		Pair<Integer,String> printjob = new Pair<Integer,String>(x, filename);
