@@ -12,7 +12,7 @@ import java.math.BigInteger;
 import java.sql.*;
 
 public class PrintServer implements Printerface {
-	private static List<UUID> activeSessions = new ArrayList<UUID>();
+	private static List<String> activeSessions = new ArrayList<String>();
 	private Queue<Pair<Integer,String>> queue = new LinkedList<Pair<Integer,String>>();
 	private Map<String,String> config = new HashMap<String, String>();
 	private static void logEvent(String event) throws IOException{
@@ -61,14 +61,14 @@ public class PrintServer implements Printerface {
 			System.out.println(ex);
 		}
 	}
-	private static Boolean authenticateSession(UUID sessionId) {
+	private static Boolean authenticateSession(String sessionId) {
 		if (!activeSessions.contains(sessionId)){
 			return false;
 		}
 		return true;
 	}
-	private static UUID createSessionID(){
-		return UUID.randomUUID();
+	private static String createSessionID(){
+		return UUID.randomUUID().toString();
 	}
 	private static void RMISetup(){
 		try {
@@ -88,7 +88,7 @@ public class PrintServer implements Printerface {
 		super();
 	}
 
-	public UUID authenticateUser(String username, String password){
+	public String authenticateUser(String username, String password){
 		ResultSet rs = null;
 		String name = null;
 		String hash = null;
@@ -107,27 +107,24 @@ public class PrintServer implements Printerface {
 		}
 		String[] split = hash.split(":");
 		String userPW = hashPassword(password, split[1]);
-		System.out.println("haaa");
 		if (userPW.equals(split[0])) {
 			try{
 				logEvent(getEventTimeStamp() + " | " + "User " + username + " has been authenticated");
 			}
 			catch(IOException ex){
 			}
-			UUID sID = createSessionID();
-			activeSessions.add(sID);
-			System.out.println(sID);
-			return sID;
+			String sessionId = createSessionID();
+			activeSessions.add(sessionId);
+			return sessionId;
 		}
 		else {
-			return new UUID(0L, 0L);
+			return new UUID(0L, 0L).toString();
 		}
 
 	}
 
-	public String print(String filename, String printer){
-		System.out.println("hallo frá hér");
-		//if (!authenticateSession(sId)){ return "Unauthorized";};
+	public String print(String filename, String printer, String sessionId){
+		if (!authenticateSession(sessionId)){ return "Unauthorized";};
 		Random ran = new Random();
 		int x = ran.nextInt(1600) + 5000;
 		Pair<Integer,String> printjob = new Pair<Integer,String>(x, filename);
@@ -142,8 +139,8 @@ public class PrintServer implements Printerface {
 		return message;
 	}
 
-	public String queue(UUID sId){
-		if (!authenticateSession(sId)){ return "Unauthorized";};
+	public String queue(String sessionId){
+		if (!authenticateSession(sessionId)){ return "Unauthorized";};
 		String q = "";;
 		for(Pair<Integer,String> printjob : queue){
 			q += printjob.getKey() + " - " + printjob.getValue() + " | ";
@@ -151,41 +148,41 @@ public class PrintServer implements Printerface {
 		return q;
 	}
 
-	public String topQueue(int job,UUID sId){
-		if (!authenticateSession(sId)){ return "Unauthorized";};
+	public String topQueue(int job,String sessionId){
+		if (!authenticateSession(sessionId)){ return "Unauthorized";};
 		return "Job with id: " + job + "has been moved to the top of the print queue";
 	}
 
-	public String start(UUID sId){
-		if (!authenticateSession(sId)){ return "Unauthorized";};
+	public String start(String sessionId){
+		if (!authenticateSession(sessionId)){ return "Unauthorized";};
 		return "Starting the print server...";
 	}
 
-	public String stop(UUID sId){
-		if (!authenticateSession(sId)){ return "Unauthorized";};
+	public String stop(String sessionId){
+		if (!authenticateSession(sessionId)){ return "Unauthorized";};
 		return "Stopping the print server...";
 	}
 
-	public String restart(UUID sId){
-		if (!authenticateSession(sId)){ return "Unauthorized";};
-		this.stop(sId);
+	public String restart(String sessionId){
+		if (!authenticateSession(sessionId)){ return "Unauthorized";};
+		this.stop(sessionId);
 		queue.clear();
-		this.start(sId);
+		this.start(sessionId);
 		return "";
 	}
 
-	public String status(UUID sId){
-		if (!authenticateSession(sId)){ return "Unauthorized";};
+	public String status(String sessionId){
+		if (!authenticateSession(sessionId)){ return "Unauthorized";};
 		return "Status: All good.";
 	}
 
-	public String readConfig(String parameter,UUID sId){
-		if (!authenticateSession(sId)){ return "Unauthorized";};
+	public String readConfig(String parameter,String sessionId){
+		if (!authenticateSession(sessionId)){ return "Unauthorized";};
 		return config.get(parameter);
 	}
 
-	public String setConfig(String parameter, String value,UUID sId){
-		if (!authenticateSession(sId)){ return "Unauthorized";};
+	public String setConfig(String parameter, String value,String sessionId){
+		if (!authenticateSession(sessionId)){ return "Unauthorized";};
 		config.put(parameter, value);
 		return "";
 	}
