@@ -286,6 +286,7 @@ public class PrintServer implements Printerface {
 
 	public String queue(String sessionId){
 		if (!authenticateSession(sessionId)){ return "Unauthorized";};
+		if (!hasAccess(sessionId, Thread.currentThread().getStackTrace()[1].getMethodName())){ return "You do not have access to this operation"; };
 		String q = "";
 		for(Pair<Integer,String> printjob : queue){
 			q += printjob.getKey() + " - " + printjob.getValue() + " | ";
@@ -295,21 +296,25 @@ public class PrintServer implements Printerface {
 
 	public String topQueue(int job,String sessionId){
 		if (!authenticateSession(sessionId)){ return "Unauthorized";};
+		if (!hasAccess(sessionId, Thread.currentThread().getStackTrace()[1].getMethodName())){ return "You do not have access to this operation"; };
 		return "Job with id: " + job + "has been moved to the top of the print queue";
 	}
 
 	public String start(String sessionId){
 		if (!authenticateSession(sessionId)){ return "Unauthorized";};
+		if (!hasAccess(sessionId, Thread.currentThread().getStackTrace()[1].getMethodName())){ return "You do not have access to this operation"; };
 		return "Starting the print server...";
 	}
 
 	public String stop(String sessionId){
 		if (!authenticateSession(sessionId)){ return "Unauthorized";};
+		if (!hasAccess(sessionId, Thread.currentThread().getStackTrace()[1].getMethodName())){ return "You do not have access to this operation"; };
 		return "Stopping the print server...";
 	}
 
 	public String restart(String sessionId){
 		if (!authenticateSession(sessionId)){ return "Unauthorized";};
+		if (!hasAccess(sessionId, Thread.currentThread().getStackTrace()[1].getMethodName())){ return "You do not have access to this operation"; };
 		this.stop(sessionId);
 		queue.clear();
 		this.start(sessionId);
@@ -318,16 +323,19 @@ public class PrintServer implements Printerface {
 
 	public String status(String sessionId){
 		if (!authenticateSession(sessionId)){ return "Unauthorized";};
+		if (!hasAccess(sessionId, Thread.currentThread().getStackTrace()[1].getMethodName())){ return "You do not have access to this operation"; };
 		return "Status: All good.";
 	}
 
 	public String readConfig(String parameter,String sessionId){
 		if (!authenticateSession(sessionId)){ return "Unauthorized";};
+		if (!hasAccess(sessionId, Thread.currentThread().getStackTrace()[1].getMethodName())){ return "You do not have access to this operation"; };
 		return config.get(parameter);
 	}
 
 	public String setConfig(String parameter, String value,String sessionId){
 		if (!authenticateSession(sessionId)){ return "Unauthorized";};
+		if (!hasAccess(sessionId, Thread.currentThread().getStackTrace()[1].getMethodName())){ return "You do not have access to this operation"; };
 		config.put(parameter, value);
 		return "";
 	}
