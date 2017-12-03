@@ -23,6 +23,8 @@ public class PrintServer implements Printerface {
 
 	private static List<Pair<String, String>> rolesList = new ArrayList<Pair<String, String>>();
 
+	private static bool useRBAC = true;
+
 	private static void logEvent(String event) throws IOException{
 		FileWriter fileWriter = new FileWriter("logfile.log",true);
 		PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -127,15 +129,22 @@ public class PrintServer implements Printerface {
 	private static Boolean hasAccess(String sessionId, String operation){
 		String username = null;
 
+		//Get the current username from the session id
 		for(Pair<String, String> s : activeSessions){
 			if (s.getValue().equals(sessionId)) {
 				username = s.getKey();
 			}
 		}
 
-		for(Pair<String, String> a : accessControlList){
-			if (a.getKey().equals(username) && a.getValue().equals(operation)) {
-				return true;
+		if (useRBAC) {
+			//Use RBAC for access control
+		}
+		else {
+			//Use access control list for access control
+			for(Pair<String, String> a : accessControlList){
+				if (a.getKey().equals(username) && a.getValue().equals(operation)) {
+					return true;
+				}
 			}
 		}
 
