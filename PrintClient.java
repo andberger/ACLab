@@ -11,7 +11,8 @@ public class PrintClient {
 		    Registry registry = LocateRegistry.getRegistry(host);
 		    Printerface p = (Printerface) registry.lookup(name);
 		    String activeSessionID = null;
-		    activeSessionID = p.authenticateUser("fred99", "asdasdasd");
+		    activeSessionID = p.authenticateUser("alice99", "asdasdasd");
+		    System.out.println(p.start(activeSessionID));
 		    System.out.println(p.print("data-file.pdf", "printer100A", activeSessionID));
 		} catch (Exception e) {
 		    System.out.println(e);
