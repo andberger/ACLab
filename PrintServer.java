@@ -23,9 +23,9 @@ public class PrintServer implements Printerface {
 
 	private static List<Pair<String, String>> rolesList = new ArrayList<Pair<String, String>>();
 
-	private static Map<String, List<Int>> rolesAndOperations = new HashMap<String, List<Int>>();
+	private static Map<String, List<Integer>> rolesAndOperations = new HashMap<String, List<Integer>>();
 
-	private static final bool USE_RBAC = true;
+	private static final Boolean USE_RBAC = true;
 
 	private static void logEvent(String event) throws IOException{
 		FileWriter fileWriter = new FileWriter("logfile.log",true);
@@ -137,7 +137,7 @@ public class PrintServer implements Printerface {
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				String role = rs.getString("role");
-				List<Int> ops = new List<Int>();
+				List<Integer> ops = new ArrayList<Integer>();
 			       	ops.add(rs.getInt("print"));	
 			       	ops.add(rs.getInt("queue"));	
 			       	ops.add(rs.getInt("topQueue"));	
