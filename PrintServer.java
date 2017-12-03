@@ -23,7 +23,7 @@ public class PrintServer implements Printerface {
 
 	private static List<Pair<String, String>> rolesList = new ArrayList<Pair<String, String>>();
 
-	private static Map<String, List<Integer>> rolesAndOperations = new HashMap<String, List<Integer>>();
+	private static Map<String, Map<String,Integer>> rolesAndOperations = new HashMap<String, Map<String,Integer>>();
 
 	private static final Boolean USE_RBAC = true;
 
@@ -92,6 +92,19 @@ public class PrintServer implements Printerface {
 		return UUID.randomUUID().toString();
 	}
 
+	private static void printOutRolesAndOps(){
+		for(String k: rolesAndOperations.keySet()){
+			String key = k.toString();
+			Map<String,Integer> value = rolesAndOperations.get(k);
+			System.out.println(key);
+			for(String o: value.keySet()){
+				String opkey = o.toString();
+				String vv = value.get(o).toString();
+				System.out.println(opkey + " - " + vv);
+			}
+		}
+	}
+
 	private static void populateAccessControlList(){
 		ResultSet rs = null;
 		try{
@@ -137,16 +150,16 @@ public class PrintServer implements Printerface {
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				String role = rs.getString("role");
-				List<Integer> ops = new ArrayList<Integer>();
-			       	ops.add(rs.getInt("print"));	
-			       	ops.add(rs.getInt("queue"));	
-			       	ops.add(rs.getInt("topQueue"));	
-			       	ops.add(rs.getInt("start"));	
-			       	ops.add(rs.getInt("stop"));	
-			       	ops.add(rs.getInt("restart"));	
-			       	ops.add(rs.getInt("status"));	
-			       	ops.add(rs.getInt("readConfig"));	
-			       	ops.add(rs.getInt("setConfig"));	
+				Map<String, Integer> ops = new HashMap<String, Integer>();
+			       	ops.put("print", rs.getInt("print"));	
+			       	ops.put("queue", rs.getInt("queue"));	
+			       	ops.put("topQueue", rs.getInt("topQueue"));	
+			       	ops.put("start", rs.getInt("start"));	
+			       	ops.put("stop", rs.getInt("stop"));	
+			       	ops.put("restart", rs.getInt("restart"));	
+			       	ops.put("status", rs.getInt("status"));	
+			       	ops.put("readConfig", rs.getInt("readConfig"));	
+			       	ops.put("setConfig", rs.getInt("setConfig"));	
 				rolesAndOperations.put(role, ops);
 			}
 			c.close();
