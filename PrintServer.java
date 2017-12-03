@@ -182,11 +182,16 @@ public class PrintServer implements Printerface {
 		if (USE_RBAC) {
 			//Use RBAC for access control
 			String role = null;
+
 			for(Pair<String, String> r : rolesList){
 				if (r.getKey().equals(username)) {
 					role = r.getValue();
 				}
 			}
+
+			if (role == null) return false;
+			Integer access = rolesAndOperations.get(role).get(operation);
+			if (access != 0) return true;
 		}
 		else {
 			//Use access control list for access control
