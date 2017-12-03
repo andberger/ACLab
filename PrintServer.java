@@ -23,7 +23,9 @@ public class PrintServer implements Printerface {
 
 	private static List<Pair<String, String>> rolesList = new ArrayList<Pair<String, String>>();
 
-	private static bool useRBAC = true;
+	private static Map<String, List<Int>> rolesAndOperations = new HashMap<String, List<Int>>();
+
+	private static final bool USE_RBAC = true;
 
 	private static void logEvent(String event) throws IOException{
 		FileWriter fileWriter = new FileWriter("logfile.log",true);
@@ -126,6 +128,34 @@ public class PrintServer implements Printerface {
 		}
 	}
 
+	private static void populateRolesAndOperations(){
+		ResultSet rs = null;
+		try{
+			Connection c = DriverManager.getConnection("jdbc:sqlite:printer.db");
+			String sql = "SELECT * FROM roles";
+			PreparedStatement pstmt = c.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String role = rs.getString("role");
+				List<Int> ops = new List<Int>();
+			       	ops.add(rs.getInt("print"));	
+			       	ops.add(rs.getInt("queue"));	
+			       	ops.add(rs.getInt("topQueue"));	
+			       	ops.add(rs.getInt("start"));	
+			       	ops.add(rs.getInt("stop"));	
+			       	ops.add(rs.getInt("restart"));	
+			       	ops.add(rs.getInt("status"));	
+			       	ops.add(rs.getInt("readConfig"));	
+			       	ops.add(rs.getInt("setConfig"));	
+				rolesAndOperations.put(role, ops);
+			}
+			c.close();
+		}
+		catch(SQLException ex){
+			System.out.println(ex);
+		}
+	}
+
 	private static Boolean hasAccess(String sessionId, String operation){
 		String username = null;
 
@@ -136,8 +166,14 @@ public class PrintServer implements Printerface {
 			}
 		}
 
-		if (useRBAC) {
+		if (USE_RBAC) {
 			//Use RBAC for access control
+			String role = null;
+			for(Pair<String, String> r : rolesList){
+				if (r.getKey().equals(username)) {
+					role = r.getValue();
+				}
+			}
 		}
 		else {
 			//Use access control list for access control
@@ -169,6 +205,7 @@ public class PrintServer implements Printerface {
 		super();
 		populateAccessControlList();
 		populateRolesList();
+		populateRolesAndOperations();
 	}
 
 	public String authenticateUser(String username, String password){
