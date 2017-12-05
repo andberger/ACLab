@@ -27,6 +27,8 @@ public class PrintServer implements Printerface {
 
 	private static final Boolean USE_RBAC = true;
 
+	private static final String DATABASE = "printer.db";
+
 	private static void logEvent(String event) throws IOException{
 		FileWriter fileWriter = new FileWriter("logfile.log",true);
 		PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -64,7 +66,7 @@ public class PrintServer implements Printerface {
 		catch(IOException ex){
 		}
 		try{
-			Connection c = DriverManager.getConnection("jdbc:sqlite:printer.db");
+			Connection c = DriverManager.getConnection("jdbc:sqlite:" + DATABASE);
 			String sql = "INSERT INTO users(username,firstname,lastname,password,role) VALUES(?,?,?,?,?)";
 			PreparedStatement pstmt = c.prepareStatement(sql);
 			pstmt.setString(1, username);
@@ -109,7 +111,7 @@ public class PrintServer implements Printerface {
 	private static void populateAccessControlList(){
 		ResultSet rs = null;
 		try{
-			Connection c = DriverManager.getConnection("jdbc:sqlite:printer.db");
+			Connection c = DriverManager.getConnection("jdbc:sqlite:" + DATABASE);
 			String sql = "SELECT username,operation FROM accesscontrollist";
 			PreparedStatement pstmt = c.prepareStatement(sql);
 			rs = pstmt.executeQuery();
@@ -127,7 +129,7 @@ public class PrintServer implements Printerface {
 	private static void populateRolesList(){
 		ResultSet rs = null;
 		try{
-			Connection c = DriverManager.getConnection("jdbc:sqlite:printer.db");
+			Connection c = DriverManager.getConnection("jdbc:sqlite:" + DATABASE);
 			String sql = "SELECT username,role FROM users";
 			PreparedStatement pstmt = c.prepareStatement(sql);
 			rs = pstmt.executeQuery();
@@ -145,7 +147,7 @@ public class PrintServer implements Printerface {
 	private static void populateRolesAndOperations(){
 		ResultSet rs = null;
 		try{
-			Connection c = DriverManager.getConnection("jdbc:sqlite:printer.db");
+			Connection c = DriverManager.getConnection("jdbc:sqlite:" + DATABASE);
 			String sql = "SELECT * FROM roles";
 			PreparedStatement pstmt = c.prepareStatement(sql);
 			rs = pstmt.executeQuery();
@@ -232,7 +234,7 @@ public class PrintServer implements Printerface {
 		String name = null;
 		String hash = null;
 		try{
-			Connection c = DriverManager.getConnection("jdbc:sqlite:printer.db");
+			Connection c = DriverManager.getConnection("jdbc:sqlite:" + DATABASE);
 			String sql = "SELECT username,password FROM users WHERE username = ?";
 			PreparedStatement pstmt = c.prepareStatement(sql);
 			pstmt.setString(1, username);

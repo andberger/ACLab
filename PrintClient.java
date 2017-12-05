@@ -14,15 +14,15 @@ public class PrintClient {
 		    String sessionId = null;
 		    sessionId = p.authenticateUser(user, pw);
 		    System.out.println("----------------------------------------------------------------------------");
-		    System.out.println(p.print("data-file.pdf", "printer100A", sessionId));
-		    System.out.println(p.queue(sessionId));
-		    System.out.println(p.topQueue(999,sessionId));
-		    System.out.println(p.start(sessionId));
-		    System.out.println(p.stop(sessionId));
-		    System.out.println(p.restart(sessionId));
-		    System.out.println(p.status(sessionId));
-		    System.out.println(p.setConfig("is_fun_config","Always",sessionId));
-		    System.out.println(p.readConfig("is_fun_config",sessionId));
+		    System.out.println("print: " + p.print("data-file.pdf", "printer100A", sessionId));
+		    System.out.println("queue: " + p.queue(sessionId));
+		    System.out.println("topQueue: " + p.topQueue(999,sessionId));
+		    System.out.println("start: " + p.start(sessionId));
+		    System.out.println("stop: " + p.stop(sessionId));
+		    System.out.println("restart: " + p.restart(sessionId));
+		    System.out.println("status: " + p.status(sessionId));
+		    System.out.println("setConfig: " + p.setConfig("is_fun_config","Always",sessionId));
+		    System.out.println("readConfig: " + p.readConfig("is_fun_config",sessionId));
 		} catch (Exception e) {
 		    System.out.println(e);
 		    System.err.println("PrintClient  exception:");
