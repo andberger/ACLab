@@ -55,7 +55,7 @@ public class PrintServer implements Printerface {
 		return hashedPW;
 	}
 
-	private static void registerUser(String username, String firstname, String lastname, String password){
+	private static void registerUser(String username, String firstname, String lastname, String password, String role){
 		String salt = String.valueOf((int)(Math.random() * 1000000000 + 1));
 		String hashedPW = hashPassword(password, salt);
 		try{
@@ -65,12 +65,13 @@ public class PrintServer implements Printerface {
 		}
 		try{
 			Connection c = DriverManager.getConnection("jdbc:sqlite:printer.db");
-			String sql = "INSERT INTO users(username,firstname,lastname,password) VALUES(?,?,?,?)";
+			String sql = "INSERT INTO users(username,firstname,lastname,password,role) VALUES(?,?,?,?,?)";
 			PreparedStatement pstmt = c.prepareStatement(sql);
 			pstmt.setString(1, username);
 			pstmt.setString(2, firstname);
 			pstmt.setString(3, lastname);
 			pstmt.setString(4, hashedPW + ":" + salt);
+			pstmt.setString(5, role);
 			pstmt.executeUpdate();
 			c.close();
 		}
@@ -342,5 +343,6 @@ public class PrintServer implements Printerface {
 
 	public static void main(String[] args){
 		RMISetup();
+
 	}
 }
