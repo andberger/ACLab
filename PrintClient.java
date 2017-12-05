@@ -13,6 +13,7 @@ public class PrintClient {
 		    Printerface p = (Printerface) registry.lookup(name);
 		    String sessionId = null;
 		    sessionId = p.authenticateUser(user, pw);
+		    System.out.println("----------------------------------------------------------------------------");
 		    System.out.println(p.print("data-file.pdf", "printer100A", sessionId));
 		    System.out.println(p.queue(sessionId));
 		    System.out.println(p.topQueue(999,sessionId));
@@ -20,7 +21,7 @@ public class PrintClient {
 		    System.out.println(p.stop(sessionId));
 		    System.out.println(p.restart(sessionId));
 		    System.out.println(p.status(sessionId));
-		    p.setConfig("is_fun_config","true",sessionId);
+		    p.setConfig("is_fun_config","Always",sessionId);
 		    System.out.println(p.readConfig("is_fun_config",sessionId));
 		} catch (Exception e) {
 		    System.out.println(e);
