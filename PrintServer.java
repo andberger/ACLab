@@ -337,7 +337,7 @@ public class PrintServer implements Printerface {
 		if (!authenticateSession(sessionId)){ return "Unauthorized";};
 		if (!hasAccess(sessionId, Thread.currentThread().getStackTrace()[1].getMethodName())){ return "You do not have access to this operation"; };
 		config.put(parameter, value);
-		return "";
+		return "Config '"+ parameter  +"' was set successfully";
 	}
 
 	public static void main(String[] args){
