@@ -8,4 +8,4 @@
 * make run-server
 
 ## To run the client
-* make run-client
+* make run-client username="alice99" password="asdasdasd"
