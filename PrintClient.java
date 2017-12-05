@@ -21,7 +21,7 @@ public class PrintClient {
 		    System.out.println(p.stop(sessionId));
 		    System.out.println(p.restart(sessionId));
 		    System.out.println(p.status(sessionId));
-		    p.setConfig("is_fun_config","Always",sessionId);
+		    System.out.println(p.setConfig("is_fun_config","Always",sessionId));
 		    System.out.println(p.readConfig("is_fun_config",sessionId));
 		} catch (Exception e) {
 		    System.out.println(e);
