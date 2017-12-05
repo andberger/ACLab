@@ -25,7 +25,7 @@ public class PrintServer implements Printerface {
 
 	private static Map<String, Map<String,Integer>> rolesAndOperations = new HashMap<String, Map<String,Integer>>();
 
-	private static final Boolean USE_RBAC = false;
+	private static final Boolean USE_RBAC = true;
 
 	private static void logEvent(String event) throws IOException{
 		FileWriter fileWriter = new FileWriter("logfile.log",true);
