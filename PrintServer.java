@@ -25,7 +25,7 @@ public class PrintServer implements Printerface {
 
 	private static Map<String, Map<String,Integer>> rolesAndOperations = new HashMap<String, Map<String,Integer>>();
 
-	private static final Boolean USE_RBAC = true;
+	private static final Boolean USE_RBAC = false;
 
 	private static void logEvent(String event) throws IOException{
 		FileWriter fileWriter = new FileWriter("logfile.log",true);
@@ -297,7 +297,7 @@ public class PrintServer implements Printerface {
 	public String topQueue(int job,String sessionId){
 		if (!authenticateSession(sessionId)){ return "Unauthorized";};
 		if (!hasAccess(sessionId, Thread.currentThread().getStackTrace()[1].getMethodName())){ return "You do not have access to this operation"; };
-		return "Job with id: " + job + "has been moved to the top of the print queue";
+		return "Job with id: " + job + " has been moved to the top of the print queue";
 	}
 
 	public String start(String sessionId){
@@ -318,7 +318,7 @@ public class PrintServer implements Printerface {
 		this.stop(sessionId);
 		queue.clear();
 		this.start(sessionId);
-		return "";
+		return "Restarting the print server...hold on...";
 	}
 
 	public String status(String sessionId){

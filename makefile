@@ -12,7 +12,7 @@ all:
 	$(JAR) $(JARFLAGS) Printerface.jar Printerface.class
 
 run-client:
-	java -Djava.security.policy=client.policy PrintClient
+	java -Djava.security.policy=client.policy PrintClient $(username) $(password)
 
 run-server:
 	java -Djava.rmi.server.codebase=Printerface.jar -Djava.rmi.server.hostname=127.0.0.1 -Djava.security.policy=server.policy PrintServer
